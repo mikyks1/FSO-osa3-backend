@@ -50,6 +50,20 @@ app.get("/info", (req, res) => {
     res.send(reply)
 })
 
+app.post("/api/persons", (req, res) => {
+    const { name, number } = req.body
+    const id = Math.round(Math.random() * 10 ** 6)
+
+    const newPerson = {
+        name: name,
+        number: number,
+        id: id
+    }
+
+    persons = persons.concat(newPerson)
+    res.json(newPerson)
+})
+
 app.delete("/api/persons/:id", (req, res) => {
     const id = Number(req.params.id)
     persons = persons.filter(person => person.id !== id)
