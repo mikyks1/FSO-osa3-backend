@@ -38,7 +38,7 @@ app.get("/api/persons/:id", (req, res) => {
         res.json(person)
     }
     else {
-        res.status(404).json({ error: "Person was not found" })
+        res.status(404).json({ error: "person was not found" })
     }
 })
 
@@ -51,7 +51,15 @@ app.get("/info", (req, res) => {
 })
 
 app.post("/api/persons", (req, res) => {
-    const { name, number } = req.body
+    const name = req.body.name
+    const number = req.body.number
+    if (!(name && number)) {
+        return res.status(400).json({ error: "name or number was not given" })
+    }
+    if (persons.find(person => person.name === name)) {
+        return res.status(400).json({ error: "name must be unique" })
+    }
+
     const id = Math.round(Math.random() * 10 ** 6)
 
     const newPerson = {
