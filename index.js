@@ -30,6 +30,18 @@ app.get("/api/persons", (req, res) => {
     res.json(persons)
 })
 
+app.get("/api/persons/:id", (req, res) => {
+    const id = Number(req.params.id)
+    const person = persons.find(person => person.id === id)
+
+    if (person) {
+        res.json(person)
+    }
+    else {
+        res.status(404).json({ error: "Person was not found" })
+    }
+})
+
 app.get("/info", (req, res) => {
     const reply = `
         <p>Phonebook contains info for ${persons.length} people</p>
