@@ -2,9 +2,7 @@ const mongoose = require('mongoose')
 
 mongoose.set('strictQuery', false)
 
-
 const url = process.env.MONGODB_URI
-
 
 console.log('connecting to', url)
 mongoose.connect(url)
@@ -17,8 +15,8 @@ mongoose.connect(url)
   })
 
 const PersonSchema = new mongoose.Schema({
-  content: String,
-  important: Boolean,
+  name: String,
+  number: String,
 })
 
 PersonSchema.set('toJSON', {
@@ -28,6 +26,5 @@ PersonSchema.set('toJSON', {
     delete returnedObject.__v
   }
 })
-
 
 module.exports = mongoose.model('Person', PersonSchema)

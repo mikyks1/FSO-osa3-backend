@@ -11,29 +11,6 @@ app.use(morgan(":method :url :status :res[content-length] - :response-time ms :c
 app.use(express.json())
 app.use(cors())
 
-let persons = [
-    {
-        name: "Arto Hellas",
-        number: "040-123456",
-        id: 1
-    },
-    {
-        name: "Ada Lovelace",
-        number: "39-44-5323523",
-        id: 2
-    },
-    {
-        name: "Dan Abramov",
-        number: "12-43-234345",
-        id: 3
-    },
-    {
-        name: "Mary Poppendieck",
-        number: "39-23-6423122",
-        id: 4
-    }
-]
-
 app.get("/api/persons", (req, res) => {
     Person.find({}).then(persons => {
         res.json(persons)
@@ -66,20 +43,18 @@ app.post("/api/persons", (req, res) => {
     if (!(name && number)) {
         return res.status(400).json({ error: "name or number was not given" })
     }
-    if (persons.find(person => person.name === name)) {
-        return res.status(400).json({ error: "name must be unique" })
-    }
+    // if (persons.find(person => person.name === name)) {
+    //     return res.status(400).json({ error: "name must be unique" })
+    // }
 
-    const id = Math.round(Math.random() * 10 ** 6)
-
-    const newPerson = {
+    const newPerson = new Person({
         name: name,
-        number: number,
-        id: id
-    }
+        number: number
+    })
 
-    persons = persons.concat(newPerson)
-    res.json(newPerson)
+    newPerson.save().then(savedPerson => {
+        res.json(savedPerson)
+    })
 })
 
 app.delete("/api/persons/:id", (req, res) => {
