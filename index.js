@@ -58,7 +58,11 @@ app.put("/api/persons/:id", (req, res, next) => {
         number: req.body.number,
     }
 
-    Person.findByIdAndUpdate(req.params.id, person, { new: true })
+    Person.findByIdAndUpdate(
+        req.params.id,
+        person,
+        { new: true, runValidators: true, context: "query" }
+    )
         .then(updatedPerson => {
             if (!updatedPerson) {
                 const error = new Error("person was removed from the server")
@@ -94,7 +98,7 @@ const errorHandler = (error, req, res, next) => {
     }
 
     if (error.name === "ValidationError") {
-        return res.status(400).json({ error: error.message })
+        return res.status(400).json({ errorName: error.name, errorMessage: error.message })
     }
 
     next(error)
