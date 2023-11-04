@@ -1,0 +1,9 @@
+GET  http://localhost:3001/api/persons/
+
+###
+
+GET  http://localhost:3001/api/persons/65429f7da352beb4e75063e0
+
+###
+
+GET  http://localhost:3001/api/persons/BadId

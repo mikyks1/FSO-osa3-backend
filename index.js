@@ -12,21 +12,17 @@ app.use(morgan(":method :url :status :res[content-length] - :response-time ms :c
 app.use(cors())
 
 app.get("/api/persons", (req, res) => {
-    Person.find({}).then(persons => {
-        res.json(persons)
-    })
+    Person.find({})
+        .then(persons => { res.json(persons) })
 })
 
-app.get("/api/persons/:id", (req, res) => {
-    const id = Number(req.params.id)
-    const person = persons.find(person => person.id === id)
-
-    if (person) {
-        res.json(person)
-    }
-    else {
-        res.status(404).json({ error: "person was not found" })
-    }
+app.get("/api/persons/:id", (req, res, next) => {
+    Person.findById(req.params.id)
+        .then(person => {
+            if (person) { res.json(person) }
+            else { res.status(404).json({ error: "person was not found" }) }
+        })
+        .catch(error => next(error))
 })
 
 app.get("/info", (req, res) => {
@@ -43,9 +39,6 @@ app.post("/api/persons", (req, res) => {
     if (!(name && number)) {
         return res.status(400).json({ error: "name or number was not given" })
     }
-    // if (persons.find(person => person.name === name)) {
-    //     return res.status(400).json({ error: "name must be unique" })
-    // }
 
     const newPerson = new Person({
         name: name,
@@ -68,3 +61,15 @@ const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
+
+const errorHandler = (error, req, res, next) => {
+    console.error(error.message)
+
+    if (error.name === "CastError") {
+        return res.status(400).send({ error: "malformatted id" })
+    }
+
+    next(error)
+}
+
+app.use(errorHandler)
