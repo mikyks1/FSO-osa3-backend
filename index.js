@@ -50,6 +50,24 @@ app.post("/api/persons", (req, res) => {
     })
 })
 
+app.put("/api/persons/:id", (req, res, next) => {
+    const person = {
+        name: req.body.name,
+        number: req.body.number,
+    }
+
+    Person.findByIdAndUpdate(req.params.id, person, { new: true })
+        .then(updatedPerson => {
+            if (!updatedPerson) {
+                const error = new Error("person was removed from the server")
+                error.name = "UpdateError"
+                throw error
+            }
+            res.json(updatedPerson)
+        })
+        .catch(error => next(error))
+})
+
 app.delete("/api/persons/:id", (req, res) => {
     Person.findByIdAndDelete(req.params.id)
         .then(result => {
@@ -64,6 +82,10 @@ app.listen(PORT, () => {
 
 const errorHandler = (error, req, res, next) => {
     console.error(error.message)
+
+    if (error.name === "UpdateError") {
+        return res.status(404).send({ error: error.message })
+    }
 
     if (error.name === "CastError") {
         return res.status(400).send({ error: "malformatted id" })
