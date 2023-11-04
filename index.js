@@ -26,11 +26,14 @@ app.get("/api/persons/:id", (req, res, next) => {
 })
 
 app.get("/info", (req, res) => {
-    const reply = `
-        <p>Phonebook contains info for ${persons.length} people</p>
-        <p>${Date()}</p>`
+    Person.find({})
+        .then(persons => {
+            const reply = `
+            <p>Phonebook contains info for ${persons.length} people</p>
+            <p>${Date()}</p>`
 
-    res.send(reply)
+            res.send(reply)
+        })
 })
 
 app.post("/api/persons", (req, res) => {
